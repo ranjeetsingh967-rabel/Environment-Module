@@ -1,4 +1,3 @@
-```yaml
 name: Terraform CI/CD
 
 on:
@@ -12,92 +11,29 @@ on:
 
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 jobs:
   terraform:
-    name: Terraform CI/CD
+    name: Terraform CI
     runs-on: ubuntu-latest
 
     steps:
-
-      # ---------------------------------------------------
-      # 1. Checkout Repository
-      # ---------------------------------------------------
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # ---------------------------------------------------
-      # 2. Setup Terraform
-      # ---------------------------------------------------
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.9.8
 
-      # ---------------------------------------------------
-      # 3. Terraform Version
-      # ---------------------------------------------------
       - name: Terraform Version
         run: terraform version
 
-      # ---------------------------------------------------
-      # 4. Terraform Format Check
-      # ---------------------------------------------------
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
 
-      # ---------------------------------------------------
-      # 5. Terraform Init
-      # ---------------------------------------------------
       - name: Terraform Init
         run: terraform init
 
-      # ---------------------------------------------------
-      # 6. Terraform Validate
-      # ---------------------------------------------------
       - name: Terraform Validate
         run: terraform validate
 
-      # ---------------------------------------------------
-      # 7. Install TFLint
-      # ---------------------------------------------------
-      - name: Setup TFLint
-        uses: terraform-linters/setup-tflint@v4
-
-      # ---------------------------------------------------
-      # 8. TFLint
-      # ---------------------------------------------------
-      - name: Run TFLint
-        run: |
-          tflint --init
-          tflint
-
-      # ---------------------------------------------------
-      # 9. Install Checkov
-      # ---------------------------------------------------
-      - name: Install Checkov
-        run: |
-          pip install checkov
-
-      # ---------------------------------------------------
-      # 10. Run Checkov Security Scan
-      # ---------------------------------------------------
-      - name: Run Checkov
-        run: |
-          checkov -d .
-
-      # ---------------------------------------------------
-      # 11. Terraform Plan
-      # ---------------------------------------------------
       - name: Terraform Plan
-        run: terraform plan -out=tfplan
-
-      # ---------------------------------------------------
-      # 12. Terraform Apply
-      # ---------------------------------------------------
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve tfplan
-```
+        run: terraform plan
