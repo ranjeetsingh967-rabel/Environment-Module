@@ -1,39 +1,57 @@
-name: Terraform CI/CD
+name: Terraform CI - Plan
 
 on:
   push:
     branches:
       - main
+      - feature2
+      - 'feature/**'
 
   pull_request:
     branches:
       - main
 
-  workflow_dispatch:
-
 jobs:
-  terraform:
-    name: Terraform CI
-    runs-on: ubuntu-latest
+  terraform-plan:
+    name: Terraform Format, Validate and Plan
+    runs-on: [self-hosted, Windows, X64]
+
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_SECRET_VALUE }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+    defaults:
+      run:
+        working-directory: environment/dev
 
     steps:
-      - name: Checkout Repository
+
+      # 1. Checkout repository
+      - name: Checkout Code
         uses: actions/checkout@v4
 
+      # 2. Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
+      # 3. Check Terraform version
       - name: Terraform Version
         run: terraform version
 
+      # 4. Terraform Format Check
       - name: Terraform Format Check
-        run: terraform fmt
+        run: terraform fmt -check -recursive
 
+      # 5. Terraform Init
       - name: Terraform Init
         run: terraform init
 
+      # 6. Terraform Validate
       - name: Terraform Validate
         run: terraform validate
 
+      # 7. Terraform Plan
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -out=tfplan
