@@ -29,23 +29,32 @@ jobs:
 
     steps:
 
+      # 1. Checkout repository
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # 2. Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
 
+      # 3. Terraform version
       - name: Terraform Version
         run: terraform version
 
+      # 4. Terraform format check
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
 
+      # 5. Terraform init
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -input=false
 
+      # 6. Terraform validate
       - name: Terraform Validate
         run: terraform validate
 
+      # 7. Terraform plan
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -input=false -no-color
