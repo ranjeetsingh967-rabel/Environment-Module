@@ -14,7 +14,9 @@ on:
 jobs:
   terraform-plan:
     name: Terraform Format, Validate and Plan
-    runs-on: [self-hosted, Windows, X64]
+
+    # Organization-level self-hosted runner
+    runs-on: self-hosted
 
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -36,7 +38,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      # 3. Check Terraform version
+      # 3. Terraform version
       - name: Terraform Version
         run: terraform version
 
