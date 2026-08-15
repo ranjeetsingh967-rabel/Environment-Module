@@ -16,7 +16,7 @@ jobs:
     name: Terraform Format, Validate and Plan
 
     # Organization-level self-hosted runner
-    runs-on: self-hosted
+    runs-on: [self-hosted, Windows, X64]
 
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
