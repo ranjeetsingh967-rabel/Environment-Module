@@ -1,0 +1,55 @@
+name: Terraform Apply
+
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform-apply:
+    name: Terraform Apply
+
+    runs-on: self-hosted
+
+    environment:
+      name: production
+
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_SECRET_VALUE }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+    defaults:
+      run:
+        working-directory: environment/dev
+
+    steps:
+
+      # 1. Checkout Code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      # 3. Terraform Version
+      - name: Terraform Version
+        run: terraform version
+
+      # 4. Terraform Init
+      - name: Terraform Init
+        run: terraform init -input=false
+
+      # 5. Terraform Validate
+      - name: Terraform Validate
+        run: terraform validate
+
+      # 6. Terraform Plan
+      - name: Terraform Plan
+        run: terraform plan -input=false -out=tfplan
+
+      # 7. Terraform Apply
+      - name: Terraform Apply
+        run: terraform apply -input=false -auto-approve tfplan
