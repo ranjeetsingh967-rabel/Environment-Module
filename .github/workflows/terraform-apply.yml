@@ -1,19 +1,11 @@
-name: Terraform CI - Plan
+name: Terraform Apply
 
 on:
-  push:
-    branches:
-      - main
-      - feature2
-      - 'feature/**'
-
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-  terraform-plan:
-    name: Terraform Format, Validate and Plan
+  terraform-apply:
+    name: Terraform Apply
 
     runs-on: self-hosted
 
@@ -29,7 +21,7 @@ jobs:
 
     steps:
 
-      # 1. Checkout repository
+      # 1. Checkout Code
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -39,22 +31,22 @@ jobs:
         with:
           terraform_wrapper: false
 
-      # 3. Terraform version
+      # 3. Terraform Version
       - name: Terraform Version
         run: terraform version
 
-      # 4. Terraform format check
-      - name: Terraform Format Check
-        run: terraform fmt
-
-      # 5. Terraform init
+      # 4. Terraform Init
       - name: Terraform Init
         run: terraform init -input=false
 
-      # 6. Terraform validate
+      # 5. Terraform Validate
       - name: Terraform Validate
         run: terraform validate
 
-      # 7. Terraform plan
+      # 6. Terraform Plan
       - name: Terraform Plan
-        run: terraform plan -input=false -no-color
+        run: terraform plan -input=false -out=tfplan
+
+      # 7. Terraform Apply
+      - name: Terraform Apply
+        run: terraform apply -input=false -auto-approve tfplan
